@@ -14,7 +14,7 @@ body{
     height: 580px;
     background: red;
     overflow: hidden;
-    background: url('/images/1.png') no-repeat center / cover;
+    background: url('../images/1.png') no-repeat center / cover;
     border-radius: 0px;
     box-shadow: 5px 20px 50px #000;
 }

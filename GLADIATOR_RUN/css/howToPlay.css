@@ -1,5 +1,5 @@
 .howtoplay {
-    background: url('/Users/adrianpothanah/gladiator_run/WebgameCoursework/GLADIATOR_RUN /images/howtoplay2.png') no-repeat center center;
+    background: url("../images/howtoplay2.png") no-repeat center center;
     background-size: cover;
     width: 100vw;
     min-height: 100vh;

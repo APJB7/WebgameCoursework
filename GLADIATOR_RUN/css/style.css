@@ -1,0 +1,44 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  height: 100%;
+}
+
+.game {
+  min-height: 100vh;
+  background-image: url("../images/back1.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+canvas {
+  display: block;
+}
+
+.backPlay {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+
+  padding: 10px 20px;
+  font-size: 18px;
+  color: white;
+  background-color: #b78fc6;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  z-index: 10;
+}
+
+.backPlay:hover {
+  background-color: #1c0d26;
+}

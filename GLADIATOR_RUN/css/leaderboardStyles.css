@@ -1,6 +1,6 @@
 .leaderboard {
     font-family: 'Press Start 2P', sans-serif;
-    background: url("/images/1.png") no-repeat center / cover;
+    background: url("../images/1.png") no-repeat center / cover;
     color: #333;
     text-align: center;
     padding: 20px;

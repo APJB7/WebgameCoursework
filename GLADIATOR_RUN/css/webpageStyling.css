@@ -5,7 +5,7 @@
     align-items:center;
     min-height: 100vh;
     font-family: 'Press Start 2P', sans-serif;
-    background: url("/images/welcomingBackground.png") no-repeat center / cover;
+    background: url("../images/welcomingBackground.png") no-repeat center / cover;
 }
 /* Navbar styling */
 .navigationBar {
