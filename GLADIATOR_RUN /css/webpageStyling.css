@@ -1,0 +1,118 @@
+.bodyWelcoming{
+    margin: 0;
+    padding: 0;
+    justify-content: center;
+    align-items:center;
+    min-height: 100vh;
+    font-family: 'Press Start 2P', sans-serif;
+    background: url("/images/welcomingBackground.png") no-repeat center / cover;
+}
+/* Navbar styling */
+.navigationBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6em;
+    background-color: #1a1a1a;
+    color: #fff;
+    position: fixed;
+    top: 0;
+    width: 99%;
+    z-index: 100;
+}
+
+.navigationLogo a {
+    color: #fff;
+    font-size: 1.5em;
+    text-decoration: none;
+}
+
+.navbar-links {
+    list-style-type: none;
+    display: flex;
+}
+
+.navbar-links li {
+    margin-left: 1em;
+}
+
+.navbar-links a {
+    color: #fff;
+    text-decoration: none;
+    padding: 0.5em;
+}
+
+.navbar-links a:hover {
+    background-color: #555;
+    border-radius: 5px;
+}
+
+/* Mobile menu toggle icon */
+.navbar-toggle {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.navbar-toggle .bar {
+    height: 3px;
+    width: 25px;
+    background-color: #fff;
+    margin: 4px 0;
+}
+
+/* Responsive Navbar */
+@media (max-width: 768px) {
+    .navbar-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+    }
+
+    .navbar-links li {
+        margin: 0.5em 0;
+    }
+
+    .navbar-toggle {
+        display: flex;
+    }
+
+    /* Display the menu when active */
+    .navbar.active .navbar-links {
+        display: flex;
+    }
+}
+
+/* Rendering the play button */
+.playButton {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.playB {
+    padding: 20px 50px;
+    font-size: 18px;
+    color: white;
+    border: none;
+    background-color: #d6a918;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.2s ease-in;
+    font-family:  "Press Start 2P";
+}
+
+.playB :hover {
+    background-color: #d7c48e;
+}
+
+
+
+
+

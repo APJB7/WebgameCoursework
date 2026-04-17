@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Login Page</title>
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="css/loginPage.css">
+        <script src="javascript/login.js" defer></script>
+    </head>
+    <body>
+        
+        <div class="mainLogin">
+            <input type="checkbox" id="chk" aria-hidden="true">
+            <div class="signup">
+                <form id="signupForm"onsubmit="signUp(event)">
+                    <label for="chk" aria-hidden="true">SIGN UP</label>
+                    <input type="text" id="signUpUsername" name="txt" placeholder="Username" required="">
+                    <input type="text" id="signUpEmail" name="txt" placeholder="Email" required="">
+                    <input type="text" id="signUpPassword" name="txt" placeholder="Password" required="">
+                    <input type="text" id="phoneNumber" name="txt" placeholder="Phone number" required="">
+                    <input type="text" id="address" name="txt" placeholder="Address" required="">
+                    <button class="buttonSignup">SIGN UP</button>
+                </form>
+
+            </div>
+            <div class="login">
+                <form onsubmit="login(event)">
+                    <label for="chk" aria-hidden="true">LOGIN</label>
+                    <input type="text" id="loginUser" placeholder="Username" required>
+                    <input type="password" id="loginPassword" placeholder="Password" required>
+                    <button class = "buttonLogin" type="submit">LOG IN</button>
+                </form>
+
+            </div>
+
+        </div>
+        
+    </body>
+
+</html>
