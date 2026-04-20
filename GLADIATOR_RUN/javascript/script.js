@@ -62,35 +62,26 @@ const userName =
   "Guest";
 
 /* =========================
-   IMAGE HELPER
+   IMAGE VARIABLES
 ========================= */
-function createImage(imageSrc) {
-  const image = new Image();
-  image.src = imageSrc;
-  return image;
-}
-
-/* =========================
-   IMAGES
-========================= */
-let platformImage = createImage("./images/Group 296.png");
-let backgroundImage = createImage("./images/gameBackgroundSprite.png");
-let upperPlatform = createImage("./images/Group 300.png");
-let pipe = createImage("./images/pipe1.png");
-let pipe2 = createImage("./images/pipeBlue.png");
-let gladiator = createImage("./images/gladiatoro1.png");
-let gladiator2 = createImage("./images/gladiatoro3.png");
-let gladiatorLeft = createImage("./images/gladiatoroLeft.png");
-let gladiatorLeft2 = createImage("./images/gladiatoroLeft2.png");
-let blockImage = createImage("./images/piranhaPlant.png");
-let goomba1 = createImage("./images/goomba2.png");
-let collisionBox1 = createImage("./images/invisibleSpriteFinal.png");
-let koopa1 = createImage("./images/koopaa.png");
-let biggerPlatform = createImage("./images/biggerPlatform.png");
-let yellowPipe = createImage("./images/yellowPipe.png");
-let blockPlatform = createImage("./images/blockPlatform.png");
-let coinImage = createImage("./images/coin.png");
-let flagImage = createImage("./images/winningFlag.png");
+let platformImage;
+let backgroundImage;
+let upperPlatform;
+let pipe;
+let pipe2;
+let gladiator;
+let gladiator2;
+let gladiatorLeft;
+let gladiatorLeft2;
+let blockImage;
+let goomba1;
+let collisionBox1;
+let koopa1;
+let biggerPlatform;
+let yellowPipe;
+let blockPlatform;
+let coinImage;
+let flagImage;
 
 /* =========================
    GAME STATE
@@ -144,6 +135,88 @@ font
     document.fonts.add(loadedFont);
   })
   .catch(() => {});
+
+/* =========================
+   ASSET LOADING
+========================= */
+function loadImage(imageSrc) {
+  return new Promise((resolve, reject) => {
+    const image = new Image();
+
+    image.onload = () => {
+      resolve(image);
+    };
+
+    image.onerror = () => {
+      reject(new Error(`Could not load image: ${imageSrc}`));
+    };
+
+    image.src = imageSrc;
+  });
+}
+
+function drawLoadingScreen(message = "Loading game...") {
+  c.fillStyle = "#07111f";
+  c.fillRect(0, 0, canvas.width, canvas.height);
+
+  c.fillStyle = "rgba(16, 185, 129, 0.18)";
+  c.beginPath();
+  c.arc(canvas.width / 2, canvas.height / 2 - 20, 110, 0, Math.PI * 2);
+  c.fill();
+
+  c.fillStyle = "white";
+  c.font = '22px "Press Start 2P", Arial, sans-serif';
+  c.textAlign = "center";
+  c.fillText(message, canvas.width / 2, canvas.height / 2);
+
+  c.font = '13px "Press Start 2P", Arial, sans-serif';
+  c.fillStyle = "rgba(255, 255, 255, 0.7)";
+  c.fillText("Please wait...", canvas.width / 2, canvas.height / 2 + 45);
+}
+
+async function loadGameAssets() {
+  drawLoadingScreen();
+
+  [
+    platformImage,
+    backgroundImage,
+    upperPlatform,
+    pipe,
+    pipe2,
+    gladiator,
+    gladiator2,
+    gladiatorLeft,
+    gladiatorLeft2,
+    blockImage,
+    goomba1,
+    collisionBox1,
+    koopa1,
+    biggerPlatform,
+    yellowPipe,
+    blockPlatform,
+    coinImage,
+    flagImage,
+  ] = await Promise.all([
+    loadImage("./images/Group 296.png"),
+    loadImage("./images/gameBackgroundSprite.png"),
+    loadImage("./images/Group 300.png"),
+    loadImage("./images/pipe1.png"),
+    loadImage("./images/pipeBlue.png"),
+    loadImage("./images/gladiatoro1.png"),
+    loadImage("./images/gladiatoro3.png"),
+    loadImage("./images/gladiatoroLeft.png"),
+    loadImage("./images/gladiatoroLeft2.png"),
+    loadImage("./images/piranhaPlant.png"),
+    loadImage("./images/goomba2.png"),
+    loadImage("./images/invisibleSpriteFinal.png"),
+    loadImage("./images/koopaa.png"),
+    loadImage("./images/biggerPlatform.png"),
+    loadImage("./images/yellowPipe.png"),
+    loadImage("./images/blockPlatform.png"),
+    loadImage("./images/coin.png"),
+    loadImage("./images/winningFlag.png"),
+  ]);
+}
 
 /* =========================
    VISUAL HELPERS
@@ -706,18 +779,64 @@ class Block {
     this.speed = speed;
     this.directionY = "up";
     this.pipeY = pipeY;
+
+    this.animationOffset = Math.random() * Math.PI * 2;
+    this.warningPulse = 0;
+  }
+
+  isVisibleAbovePipe() {
+    const visibleBottom = Math.min(this.position.y + this.height, this.pipeY);
+    const visibleTop = this.position.y;
+
+    return visibleBottom > visibleTop && visibleTop < this.pipeY;
+  }
+
+  drawWarningPulse() {
+    if (!this.isVisibleAbovePipe()) return;
+
+    const pulse = 0.45 + Math.sin(Date.now() / 180 + this.animationOffset) * 0.25;
+    const visibleHeight = Math.max(0, this.pipeY - this.position.y);
+    const centerX = this.position.x + this.width / 2;
+    const centerY = this.position.y + Math.min(visibleHeight / 2, 45);
+
+    c.save();
+    c.globalAlpha = pulse;
+    c.strokeStyle = "rgba(255, 70, 70, 0.45)";
+    c.lineWidth = 3;
+    c.beginPath();
+    c.arc(centerX, centerY, 34 + pulse * 12, 0, Math.PI * 2);
+    c.stroke();
+    c.restore();
   }
 
   draw() {
     if (!this.image || !this.image.complete) return;
 
+    const sway = Math.sin(Date.now() / 220 + this.animationOffset) * 3;
+    const stretch = Math.sin(Date.now() / 180 + this.animationOffset) * 0.035;
+    const scaleX = 1 + stretch;
+    const scaleY = 1 - stretch * 0.6;
+
+    const animatedWidth = this.width * scaleX;
+    const animatedHeight = this.height * scaleY;
+
+    const drawX = this.position.x + sway + (this.width - animatedWidth) / 2;
+    const drawY = this.position.y + (this.height - animatedHeight);
+
+    //this.drawWarningPulse();
+
     c.save();
 
+    /*
+      Clip area:
+      Only the part above the pipe is visible.
+      The pipe is drawn after the piranha, so the lower body stays hidden.
+    */
     c.beginPath();
-    c.rect(this.position.x - 10, 0, this.width + 20, this.pipeY);
+    c.rect(this.position.x - 18, 0, this.width + 36, this.pipeY);
     c.clip();
 
-    c.drawImage(this.image, this.position.x, this.position.y);
+    c.drawImage(this.image, drawX, drawY, animatedWidth, animatedHeight);
 
     c.restore();
 
@@ -754,11 +873,21 @@ class Block {
 
     if (visibleBottom <= visibleTop) return false;
 
+    /*
+      Slightly smaller hitbox than the sprite so the collision feels fair.
+    */
+    const piranhaHitbox = {
+      x: this.position.x + 12,
+      y: visibleTop + 6,
+      width: this.width - 24,
+      height: visibleBottom - visibleTop - 6,
+    };
+
     return (
-      playerHitbox.x < this.position.x + this.width &&
-      playerHitbox.x + playerHitbox.width > this.position.x &&
-      playerHitbox.y < visibleBottom &&
-      playerHitbox.y + playerHitbox.height > visibleTop
+      playerHitbox.x < piranhaHitbox.x + piranhaHitbox.width &&
+      playerHitbox.x + playerHitbox.width > piranhaHitbox.x &&
+      playerHitbox.y < piranhaHitbox.y + piranhaHitbox.height &&
+      playerHitbox.y + playerHitbox.height > piranhaHitbox.y
     );
   }
 }
@@ -817,10 +946,12 @@ function drawScoreAndTimer() {
    LEVEL BUILDING HELPERS
 ========================= */
 function addGround(startX, count = 1, gap = 0) {
+  const platformOverlap = 4;
+
   for (let i = 0; i < count; i++) {
     platforms.push(
       new Platform({
-        x: startX + i * (platformImage.width + gap),
+        x: startX + i * (platformImage.width - platformOverlap + gap),
         y: GROUND_Y,
         image: platformImage,
         type: "ground",
@@ -865,17 +996,12 @@ function createPiranhaFromPipe(pipeX, pipeY, pipeWidth = 110, options = {}) {
 
   return new Block({
     x: centeredX + (options.offsetX || 0),
-
     y: pipeY + (options.startOffsetY || 35),
-
     width: piranhaWidth,
     height: piranhaHeight,
     image: options.image || blockImage,
-
     minY: pipeY + (options.startOffsetY || 35),
-
     maxY: pipeY - (options.riseHeight || 95),
-
     speed: options.speed || 1,
     pipeY,
   });
@@ -949,24 +1075,6 @@ function createPlatformEnemy(
    INIT
 ========================= */
 function init() {
-  platformImage = createImage("./images/Group 296.png");
-  backgroundImage = createImage("./images/gameBackgroundSprite.png");
-  upperPlatform = createImage("./images/Group 300.png");
-  pipe = createImage("./images/pipe1.png");
-  pipe2 = createImage("./images/pipeBlue.png");
-  gladiator = createImage("./images/gladiatoro1.png");
-  gladiator2 = createImage("./images/gladiatoro3.png");
-  gladiatorLeft = createImage("./images/gladiatoroLeft.png");
-  gladiatorLeft2 = createImage("./images/gladiatoroLeft2.png");
-  blockImage = createImage("./images/piranhaPlant.png");
-  goomba1 = createImage("./images/goomba2.png");
-  koopa1 = createImage("./images/koopaa.png");
-  collisionBox1 = createImage("./images/invisibleSpriteFinal.png");
-  biggerPlatform = createImage("./images/biggerPlatform.png");
-  blockPlatform = createImage("./images/blockPlatform.png");
-  coinImage = createImage("./images/coin.png");
-  flagImage = createImage("./images/winningFlag.png");
-
   score = 0;
   startTime = Date.now();
   levelIntroStart = Date.now();
@@ -1131,6 +1239,7 @@ function displayWin() {
 
   c.fillStyle = "white";
   c.font = "40px Jaro";
+  c.textAlign = "left";
   c.fillText("You Win!", canvas.width / 2 - 100, canvas.height / 2 - 20);
 
   themeSong.pause();
@@ -1146,6 +1255,7 @@ function displayGameOver() {
 
   c.fillStyle = "white";
   c.font = "40px Jaro";
+  c.textAlign = "left";
   c.fillText("You Lose", canvas.width / 2 - 100, canvas.height / 2 - 20);
 
   themeSong.pause();
@@ -1402,10 +1512,6 @@ function handlePlatformCollision() {
       return;
     }
 
-    /*
-      Side collision only needs to be strict for pipes.
-      Ground/platform side collision can make movement feel broken.
-    */
     if (platform.type === "pipe") {
       if (
         smallestOverlap === overlapLeft &&
@@ -1467,6 +1573,10 @@ function animate() {
     genericObject.draw();
   });
 
+  /*
+    Piranhas are drawn before pipes.
+    This makes the pipe hide the lower part of the piranha.
+  */
   blockInstance.update();
   blockInstance2.update();
   blockInstance3.update();
@@ -1508,10 +1618,6 @@ function animate() {
 
   updateFloatingTexts();
 
-  /*
-    Set movement before updating the player.
-    This feels more responsive than setting velocity after update.
-  */
   if (keys.right.pressed && player.position.x < 400 && !player.blockedRight) {
     player.velocity.x = player.speed;
   } else if (
@@ -1605,7 +1711,36 @@ addEventListener("keyup", (e) => {
 });
 
 /* =========================
-   START GAME
+   START GAME AFTER ASSETS LOAD
 ========================= */
-init();
-animate();
+async function startGame() {
+  try {
+    await loadGameAssets();
+    init();
+    animate();
+  } catch (error) {
+    console.error(error);
+
+    c.fillStyle = "#07111f";
+    c.fillRect(0, 0, canvas.width, canvas.height);
+
+    c.fillStyle = "#ff6b6b";
+    c.font = "20px Arial";
+    c.textAlign = "center";
+    c.fillText(
+      "Failed to load game assets.",
+      canvas.width / 2,
+      canvas.height / 2
+    );
+
+    c.fillStyle = "white";
+    c.font = "14px Arial";
+    c.fillText(
+      "Check your images, sound and folder paths.",
+      canvas.width / 2,
+      canvas.height / 2 + 35
+    );
+  }
+}
+
+startGame();
